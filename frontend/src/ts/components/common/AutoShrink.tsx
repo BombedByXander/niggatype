@@ -12,12 +12,12 @@ export function AutoShrink(
   const [ref, el] = useRefWithUtils<HTMLElement>();
 
   createEffect(() => {
-    updateNameFontSize(el());
+    updateFontSize(el());
   });
 
   const throttledEvent = throttle(1000, () => {
     if (el()?.native.isConnected) {
-      updateNameFontSize(el());
+      updateFontSize(el());
     }
   });
 
@@ -34,28 +34,21 @@ export function AutoShrink(
   );
 }
 
-export function updateNameFontSize(nameField?: ElementWithUtils): void {
-  if (nameField === undefined) return;
+export function updateFontSize(element?: ElementWithUtils): void {
+  if (element === undefined) return;
   //dont run this function in safari because OH MY GOD IT IS SO SLOW
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   if (isSafari) return;
 
-  const nameFieldParent = nameField?.getParent();
+  const parent = element?.getParent();
   const upperLimit = convertRemToPixels(2);
-  if (!nameFieldParent) return;
+  if (!parent) return;
 
-  nameField.native.style.fontSize = `10px`;
-  const parentWidth = nameFieldParent.native.clientWidth;
-  const widthAt10 = nameField.native.clientWidth;
+  element.native.style.fontSize = `10px`;
+  const parentWidth = parent.native.clientWidth;
+  const widthAt10 = element.native.clientWidth;
   const ratioAt10 = parentWidth / widthAt10;
   const fittedFontSize = ratioAt10 * 10;
   const finalFontSize = Math.min(Math.max(fittedFontSize, 10), upperLimit);
-  console.log("### new final", {
-    parentWidth,
-    widthAt10,
-    ratioAt10,
-    fittedFontSize,
-    finalFontSize,
-  });
-  nameField.native.style.fontSize = `${finalFontSize}px`;
+  element.native.style.fontSize = `${finalFontSize}px`;
 }

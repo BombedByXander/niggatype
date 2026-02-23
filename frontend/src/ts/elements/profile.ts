@@ -438,13 +438,6 @@ export function updateNameFontSize(where: ProfileViewPaths): void {
   const fittedFontSize = ratioAt10 * 10;
   const finalFontSize = Math.min(Math.max(fittedFontSize, 10), upperLimit);
   nameField.native.style.fontSize = `${finalFontSize}px`;
-  console.log("### old final", {
-    parentWidth,
-    widthAt10,
-    ratioAt10,
-    fittedFontSize,
-    finalFontSize,
-  });
 }
 
 export function updateFriendRequestButton(): void {
