@@ -12,11 +12,13 @@ import { Overlays } from "./layout/overlays/Overlays";
 import { Modals } from "./modals/Modals";
 //import { AboutPage } from "./pages/AboutPage";
 import { ProfilePage } from "./pages/profile/ProfilePage";
+import { ProfileSearchPage } from "./pages/profile/ProfileSearchPage";
 
 const components: Record<string, () => JSXElement> = {
   footer: () => <Footer />,
   aboutpage: () => <ProfilePage />,
   profilepage: () => <ProfilePage />,
+  profilesearchpage: () => <ProfileSearchPage />,
   modals: () => <Modals />,
   overlays: () => <Overlays />,
   theme: () => <Theme />,
