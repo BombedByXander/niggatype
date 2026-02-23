@@ -281,6 +281,7 @@ export const page = new Page<undefined | UserProfile>({
       qs(".page.pageProfile .search")?.hide();
       qs(".page.pageProfile .content")?.show();
       reset();
+      console.log("###", options);
       void update({
         uidOrName,
         data: options?.data,

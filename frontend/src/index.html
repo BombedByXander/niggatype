@@ -38,13 +38,28 @@
           <div id="ad-vertical-right"></div>
         </div>
         <load src="html/pages/loading.html" />
-        <div class="page pageAbout full-width hidden" id="pageAbout">
+        <!-- TODO revert full-width -->
+        <div class="page pageAbout hidden" id="pageAbout">
           <mount data-component="aboutpage"></mount>
         </div>
         <load src="html/pages/settings.html" />
         <load src="html/pages/login.html" />
         <load src="html/pages/account.html" />
         <load src="html/pages/profile.html" />
+
+        <!--div class="page pageProfileSearch hidden" id="pageProfileSearch">
+          <form class="search">
+            <div class="title">Profile lookup</div>
+            <input class="username" type="text" placeholder="username" />
+            <button type="submit">
+              <i class="fas fa-fw fa-chevron-right"></i>
+            </button>
+          </form>
+        </div>
+        <div class="page pageProfile" id="pageProfile">
+          <mount data-component="profilepage"></mount>
+        </div>
+      -->
         <load src="html/pages/test.html" />
         <load src="html/pages/404.html" />
         <load src="html/pages/account-settings.html" />

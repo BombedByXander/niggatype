@@ -41,18 +41,23 @@
   }
 }
 
+@utility rounded {
+  border-radius: var(--roundness);
+}
+
+@utility rounded-double {
+  border-radius: calc(var(--roundness) * 2);
+}
+
+@utility rounded-half {
+  border-radius: calc(var(--roundness) / 2);
+}
+
+@utility debug {
+  border: 1px dashed hotpink !important;
+}
+
 @layer utilities {
-  .rounded {
-    border-radius: var(--roundness);
-  }
-
-  .rounded-double {
-    border-radius: calc(var(--roundness) * 2);
-  }
-
-  .rounded-half {
-    border-radius: calc(var(--roundness) / 2);
-  }
   .has-button\:p-0:has(button) {
     padding: 0;
   }

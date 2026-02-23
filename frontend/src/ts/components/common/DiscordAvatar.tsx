@@ -2,6 +2,7 @@ import { createSignal, JSXElement, Show } from "solid-js";
 import { createStore } from "solid-js/store";
 
 import { FaSolidIcon } from "../../types/font-awesome";
+import { cn } from "../../utils/cn";
 
 import { Fa } from "./Fa";
 
@@ -13,11 +14,17 @@ export function DiscordAvatar(props: {
   discordAvatar: string | undefined;
   size?: number;
   missingIcon?: FaSolidIcon;
+  class?: string;
 }): JSXElement {
   const cacheKey = (): string => `${props.discordId}/${props.discordAvatar}`;
   const [showSpinner, setShowSpinner] = createSignal(true);
   return (
-    <div class="relative inline-flex h-[1em] w-[1em] shrink-0 items-center justify-center text-lg">
+    <div
+      class={cn(
+        "relative inline-flex h-[1em] w-[1em] shrink-0 items-center justify-center text-lg",
+        props.class,
+      )}
+    >
       <Show
         when={
           props.discordId !== undefined &&

@@ -35,7 +35,7 @@ export function User(
       </Show>
       <Button
         type="text"
-        href={`/profile/${props.user.uid}?isUid`}
+        href={`/profile/${props.user.name}`}
         text={props.user.name}
         router-link
       />
@@ -51,7 +51,7 @@ export function User(
   );
 }
 
-function UserFlags(props: SupportsFlags & UserFlagOptions): JSXElement {
+export function UserFlags(props: SupportsFlags & UserFlagOptions): JSXElement {
   const flags = (): UserFlag[] => getMatchingFlags(props);
 
   return (
@@ -74,13 +74,13 @@ function UserFlags(props: SupportsFlags & UserFlagOptions): JSXElement {
   );
 }
 
-function UserBadge(props: { id?: number }): JSXElement {
+export function UserBadge(props: { id?: number; iconOnly?: true }): JSXElement {
   const badge = (): UserBadgeType | undefined =>
     props.id !== undefined ? badges[props.id] : undefined;
   return (
     <Show when={badge() !== undefined}>
       <div
-        class="rounded-md p-[0.5em] text-[0.75em]"
+        class="rounded-md p-[0.5em] px-1.5 text-[0.75em]"
         aria-label={badge()?.description}
         data-balloon-pos="right"
         style={{
@@ -91,7 +91,9 @@ function UserBadge(props: { id?: number }): JSXElement {
       >
         <Show when={badge()?.icon}>
           <Fa icon={badge()?.icon ?? "fa-question"} fixedWidth={true} />
-          <span class="hidden md:inline"> {badge()?.name}</span>
+          <Show when={!props.iconOnly}>
+            <span class="hidden md:inline"> {badge()?.name}</span>
+          </Show>
         </Show>
       </div>
     </Show>
