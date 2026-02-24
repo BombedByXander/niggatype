@@ -19,7 +19,7 @@ import { ActivityCalendar } from "./ActivityCalendar";
 import { UserDetails } from "./UserDetails";
 
 const [currentName, setCurrentName] = createSignal<string | undefined>(
-  "user_51",
+  undefined,
 );
 
 const pageName: PageName = "profile";
