@@ -83,7 +83,8 @@ function ActionButtons(props: { profile: UserProfile }): JSXElement {
     props.profile.uid === (getUserId() ?? "");
 
   const [hasFriendRequest, setHasFriendRequest] = createSignal(false);
-  const showFriendsButton = () => isLoggedIn() && !hasFriendRequest();
+  const showFriendsButton = () =>
+    isLoggedIn() && !isUsersProfile() && !hasFriendRequest();
 
   createEffect(() => {
     setHasFriendRequest(

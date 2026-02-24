@@ -6,7 +6,7 @@ import * as Account from "../pages/account";
 import * as PageTest from "../pages/test";
 import * as PageLogin from "../pages/login";
 import * as PageLoading from "../pages/loading";
-import * as PageProfile from "../pages/profile";
+import * as PageProfile from "../components/pages/profile/ProfilePage";
 import * as PageProfileSearch from "../components/pages/profile/ProfileSearchPage";
 import * as Friends from "../pages/friends";
 import * as Page404 from "../pages/404";

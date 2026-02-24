@@ -9,7 +9,7 @@ import Page, { PageName } from "../../../pages/page";
 import { getUserProfile } from "../../../queries/profile";
 import { getConfig } from "../../../signals/config";
 import { getActivePage } from "../../../signals/core";
-import { qsr } from "../../../utils/dom";
+import { onDOMReady, qsr } from "../../../utils/dom";
 import { Formatting } from "../../../utils/format";
 import { formatTopPercentage } from "../../../utils/misc";
 import * as Skeleton from "../../../utils/skeleton";
@@ -22,8 +22,7 @@ const [currentName, setCurrentName] = createSignal<string | undefined>(
   "user_51",
 );
 
-//TODO
-const pageName: PageName = "about";
+const pageName: PageName = "profile";
 export function ProfilePage(): JSXElement {
   const isOpen: () => boolean = () => getActivePage() === pageName;
 
@@ -179,7 +178,7 @@ function PbTable<M extends "time" | "words">(props: {
   );
 }
 
-export const skeletonPage = new Page({
+export const page = new Page({
   id: "profile",
   element: qsr(".page.pageProfile"),
   path: "/profile",
@@ -193,8 +192,6 @@ export const skeletonPage = new Page({
   },
 });
 
-/*
 onDOMReady(() => {
   Skeleton.save("pageProfile");
 });
-*/
