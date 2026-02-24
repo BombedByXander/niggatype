@@ -8,14 +8,23 @@
     {
       "name": "backend",
       "path": "backend",
+      "settings": {
+        "oxc.fmt.configPath": "../.oxfmtrc-editor.json",
+      },
     },
     {
       "name": "frontend",
       "path": "frontend",
+      "settings": {
+        "oxc.fmt.configPath": "../.oxfmtrc-editor.json",
+      },
     },
     {
       "name": "packages",
       "path": "packages",
+      "settings": {
+        "oxc.fmt.configPath": "../.oxfmtrc-editor.json",
+      },
     },
   ],
   "settings": {
@@ -44,6 +53,7 @@
     "testing.automaticallyOpenTestResults": "neverOpen",
     "vitest.maximumConfigs": 10,
     "oxc.typeAware": true,
+    "oxc.fmt.configPath": ".oxfmtrc-editor.json",
     "typescript.format.enable": false,
     "[json]": {
       "editor.defaultFormatter": "oxc.oxc-vscode",

@@ -75,7 +75,7 @@
   },
   "lint-staged": {
     "*": [
-      "oxfmt --no-error-on-unmatched-pattern"
+      "oxfmt -c .oxfmtrc-precommit.json --no-error-on-unmatched-pattern"
     ],
     "*.{ts,tsx,js}": [
       "oxlint --type-aware --type-check"
