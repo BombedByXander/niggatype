@@ -5,9 +5,13 @@ import {
 } from "@monkeytype/schemas/users";
 import { differenceInDays } from "date-fns/differenceInDays";
 import { formatDate } from "date-fns/format";
-import { For, JSXElement, Show } from "solid-js";
+import { createEffect, createSignal, For, JSXElement, Show } from "solid-js";
 
-import { isFriend } from "../../../db";
+import { getSnapshot, isFriend } from "../../../db";
+import * as Notifications from "../../../elements/notifications";
+import * as UserReportModal from "../../../modals/user-report";
+import { addFriend } from "../../../pages/friends";
+import { getUserId, isLoggedIn } from "../../../signals/core";
 import { cn } from "../../../utils/cn";
 import { secondsToString } from "../../../utils/date-and-time";
 import { formatXp, getXpDetails, XPDetails } from "../../../utils/levels";
@@ -66,10 +70,65 @@ export function UserDetails(props: { profile: UserProfile }): JSXElement {
         </Show>
       </div>
 
-      <div class="h-full rounded-r hover:bg-text hover:text-bg">
-        <div>X</div>
+      <div class="flex h-full flex-col">
+        <ActionButtons profile={props.profile} />
       </div>
     </div>
+  );
+}
+
+function ActionButtons(props: { profile: UserProfile }): JSXElement {
+  const isUsersProfile = () =>
+    props.profile.uid !== undefined &&
+    props.profile.uid === (getUserId() ?? "");
+
+  const [hasFriendRequest, setHasFriendRequest] = createSignal(false);
+  const showFriendsButton = () => isLoggedIn() && !hasFriendRequest();
+
+  createEffect(() => {
+    setHasFriendRequest(
+      !isUsersProfile() &&
+        getSnapshot()?.connections[props.profile.uid ?? ""] !== undefined,
+    );
+  });
+
+  const handleAddFriend = () => {
+    const friendName = props.profile.name;
+    void addFriend(friendName).then((result) => {
+      if (result === true) {
+        Notifications.add(`Request sent to ${friendName}`);
+        setHasFriendRequest(true);
+      } else {
+        Notifications.add(result, -1);
+      }
+    });
+  };
+
+  return (
+    <>
+      <Show when={!isUsersProfile()}>
+        <Button
+          class={cn("h-full rounded-none rounded-tr", {
+            "rounded-br": !showFriendsButton(),
+          })}
+          fa={{ icon: "fa-flag", fixedWidth: true }}
+          onClick={() =>
+            void UserReportModal.show({
+              uid: props.profile.uid as string,
+              name: props.profile.name,
+              lbOptOut: props.profile.lbOptOut ?? false,
+            })
+          }
+        />
+      </Show>
+      <Show when={showFriendsButton()}>
+        <Button
+          class="h-full rounded-none rounded-br"
+          fa={{ icon: "fa-user-plus", fixedWidth: true }}
+          onClick={() => handleAddFriend()}
+        />
+      </Show>
+    </>
   );
 }
 
@@ -202,7 +261,7 @@ function BioAndKeyboard(props: {
       ></div>
       <div
         class={cn(
-          "grid h-full content-center gap-2 text-sm",
+          "flex h-full flex-col content-center justify-around gap-2 text-sm",
           props.variant === "hasBioOrKeyboard" && "md:order-4",
           props.variant === "full" && "md:col-span-2 lg:order-4 lg:col-span-1",
         )}
@@ -290,7 +349,7 @@ function Socials(props: {
           props.variant === "full" && "md:hidden lg:order-5 lg:block",
         )}
       ></div>
-      <div class={cn(props.variant === "full" && "lg:order-6")}>
+      <div class={cn("h-full", props.variant === "full" && "lg:order-6")}>
         <div
           class={cn(
             "text-sm text-sub md:hidden",
@@ -301,7 +360,7 @@ function Socials(props: {
         </div>
         <div
           class={cn(
-            "flex gap-2 text-2xl text-text md:flex-col lg:flex-col [&>a]:text-text [&>a]:hover:text-main",
+            "flex gap-2 text-2xl text-text md:flex-col lg:h-full lg:flex-col lg:justify-around [&>a]:text-text [&>a]:hover:text-main",
             props.variant === "full" && "md:flex-row",
           )}
         >
