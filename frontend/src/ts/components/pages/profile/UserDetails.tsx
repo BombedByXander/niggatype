@@ -168,7 +168,7 @@ function BioAndKeyboard(props: { details?: UserProfileDetails }): JSXElement {
 
 function TypingStats(props: { typingStats: TypingStatsType }): JSXElement {
   return (
-    <div class="grid grid-cols-3 gap-4 lg:flex lg:flex-col">
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-4 sm:grid-cols-3 lg:flex lg:flex-col">
       <div class="flex flex-col">
         <div class="text-xs text-sub">tests started</div>
         <div class="text-2xl">{props.typingStats.startedTests}</div>
