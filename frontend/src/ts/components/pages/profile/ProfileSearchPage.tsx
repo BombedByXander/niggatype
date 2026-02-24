@@ -10,19 +10,24 @@ import * as Skeleton from "../../../utils/skeleton";
 import { Button } from "../../common/Button";
 import { H2 } from "../../common/Headers";
 import { ValidatedInput } from "../../common/ValidatedInput";
-const [getName, setName] = createSignal("");
+const [getName, setName] = createSignal<string | undefined>(undefined);
 
 export function ProfileSearchPage(): JSXElement {
   const [isValid, setValid] = createSignal(false);
+
+  const goToPage = (): void => {
+    if (isValid()) {
+      NavigationEvent.dispatch(`/profile/${getName()}`, {});
+    }
+  };
+
   return (
     <div class="grid min-h-screen place-items-center">
       <form
         class="inline-grid w-96 gap-2"
         onSubmit={(e) => {
           e.preventDefault();
-          if (isValid()) {
-            NavigationEvent.dispatch(`/profile/${getName()}`, {});
-          }
+          goToPage();
         }}
       >
         <div class="text-center">
@@ -56,9 +61,7 @@ export function ProfileSearchPage(): JSXElement {
               class="shrink"
               fa={{ icon: "fa-chevron-right", fixedWidth: true }}
               disabled={!isValid()}
-              onClick={() => {
-                //
-              }}
+              onClick={() => goToPage()}
             />
           </div>
         </div>
@@ -76,7 +79,7 @@ export const page = new Page({
   },
   beforeShow: async (): Promise<void> => {
     Skeleton.append("pageProfileSearch", "main");
-    setName("");
+    setName(undefined);
   },
   afterShow: async (): Promise<void> => {
     qs(".page.pageProfileSearch input")?.focus();

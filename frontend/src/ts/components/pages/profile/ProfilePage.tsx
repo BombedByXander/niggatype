@@ -192,7 +192,6 @@ export const skeletonPage = new Page({
   beforeShow: async (options): Promise<void> => {
     Skeleton.append("pageProfile", "main");
     const userName = options.params?.["uidOrName"];
-    console.log("### before show", userName);
     setCurrentName(userName);
   },
 });

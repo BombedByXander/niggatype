@@ -1,4 +1,4 @@
-import { JSXElement, onMount } from "solid-js";
+import { createEffect, JSXElement, onMount } from "solid-js";
 
 import {
   ValidatedHtmlInputElement,
@@ -15,11 +15,15 @@ export function ValidatedInput<T = string>(
   // Refs are assigned by SolidJS via the ref attribute
   const [inputRef, inputEl] = useRefWithUtils<HTMLInputElement>();
 
-  let _validatedInput: ValidatedHtmlInputElement | undefined;
+  createEffect(() => {
+    validatedInput?.setValue(props.value ?? null);
+  });
+
+  let validatedInput: ValidatedHtmlInputElement | undefined;
 
   onMount(() => {
     // oxlint-disable-next-line typescript/no-non-null-assertion
-    _validatedInput = new ValidatedHtmlInputElement(inputEl()!, {
+    validatedInput = new ValidatedHtmlInputElement(inputEl()!, {
       ...props,
     });
   });
@@ -32,3 +36,10 @@ export function ValidatedInput<T = string>(
     />
   );
 }
+
+<div class="grid min-h-screen place-items-center">
+  <div class="grid grid-cols-2 gap-4">
+    <div class="col-span-2"></div>
+    <div class="text-md flex gap-2"></div>
+  </div>
+</div>;
