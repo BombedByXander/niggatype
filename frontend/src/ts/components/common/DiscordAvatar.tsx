@@ -3,7 +3,6 @@ import { createStore } from "solid-js/store";
 
 import { FaSolidIcon } from "../../types/font-awesome";
 import { cn } from "../../utils/cn";
-
 import { Fa } from "./Fa";
 
 //cache successful and missing avatars
