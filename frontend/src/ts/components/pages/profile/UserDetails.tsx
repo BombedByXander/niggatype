@@ -29,7 +29,7 @@ export function UserDetails(props: { profile: UserProfile }): JSXElement {
           </Show>
         </div>
         <div class="hidden h-full w-2 rounded bg-bg lg:order-3 lg:block"></div>
-        <div class="lg:order-2">
+        <div class="col-span-1 md:col-span-3 lg:order-2">
           <TypingStats typingStats={props.profile.typingStats} />
         </div>
         <div class="hidden h-full w-2 rounded bg-bg lg:order-6 lg:block"></div>
