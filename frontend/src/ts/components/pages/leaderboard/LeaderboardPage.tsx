@@ -27,7 +27,6 @@ import { getActivePage, isLoggedIn } from "../../../signals/core";
 import { onDOMReady, qsr } from "../../../utils/dom";
 import * as Skeleton from "../../../utils/skeleton";
 import AsyncContent from "../../common/AsyncContent";
-
 import { Sidebar } from "./Sidebar";
 import { Table } from "./Table";
 import { TableNavigation } from "./TableNavigation";
@@ -60,7 +59,7 @@ const [selection, setSelection] = lsSelection();
 const [page, setPage] = createSignal(0);
 
 export function LeaderboardPage(): JSXElement {
-  const isOpen = (): boolean => getActivePage() === pageName;
+  const isOpen = () => getActivePage() === pageName;
 
   const [scrollToUser, setScrollToUser] = createSignal(false);
 
@@ -104,7 +103,7 @@ export function LeaderboardPage(): JSXElement {
     enabled: isOpen(),
   }));
 
-  const onSelectionChange = (newSelection: Selection): void => {
+  const onSelectionChange = (newSelection: Selection) => {
     setSelection(newSelection);
     setPage(0);
   };
@@ -112,7 +111,7 @@ export function LeaderboardPage(): JSXElement {
   /**
    * the page that contains the user
    */
-  const userPage = (): number | undefined => {
+  const userPage = () => {
     const userRank = selection().friendsOnly
       ? rankQuery.data?.friendsRank
       : rankQuery.data?.rank;

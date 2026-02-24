@@ -10,7 +10,6 @@ import { Formatting } from "../../../utils/format";
 import { Conditional } from "../../common/Conditional";
 import { Fa } from "../../common/Fa";
 import { LoadingCircle } from "../../common/LoadingCircle";
-
 import { Table, TableEntry } from "./Table";
 
 export function UserRank(props: {
@@ -26,7 +25,7 @@ export function UserRank(props: {
   userTimeTyping: number;
 }): JSXElement {
   const format = createMemo(() => new Formatting(getConfig));
-  const userOverride = (): JSXElement => {
+  const userOverride = () => {
     if (props.data === undefined || props.data === null) {
       return "";
     }
