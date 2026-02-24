@@ -37,7 +37,7 @@ export function ProfilePage(): JSXElement {
     <AsyncContent query={profileQuery}>
       {(profile) => (
         <div class="flex flex-col gap-8">
-          <div class="rounded bg-sub-alt p-4">
+          <div class="rounded bg-sub-alt">
             <UserDetails profile={profile} />
           </div>
           <Show when={!profile.banned && !profile.lbOptOut}>

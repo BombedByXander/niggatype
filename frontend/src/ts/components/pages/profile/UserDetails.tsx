@@ -17,14 +17,32 @@ import { UserBadge, UserFlags } from "../../common/User";
 
 export function UserDetails(props: { profile: UserProfile }): JSXElement {
   return (
-    <div class="grid grid-flow-row grid-cols-1 gap-4 md:grid-cols-2">
-      <AvatarAndName profile={props.profile} />
-      <TypingStats typingStats={props.profile.typingStats} />
+    <div class="grid grid-cols-[1fr_minmax(0,2rem)]">
+      <div class="grid grid-cols-1 items-center gap-4 p-4 md:grid-cols-[1.25fr_auto_1.25fr] lg:grid-cols-[17.5rem_auto_1fr_auto_2fr_auto_auto]">
+        <div class="lg:order-first">
+          <AvatarAndName profile={props.profile} />
+        </div>
+        <div class="hidden h-full w-2 rounded bg-bg md:block lg:order-2"></div>
+        <div class="lg:order-5">
+          <Show when={!props.profile.banned}>
+            <BioAndKeyboard details={props.profile.details} />
+          </Show>
+        </div>
+        <div class="hidden h-full w-2 rounded bg-bg lg:order-3 lg:block"></div>
+        <div class="lg:order-2">
+          <TypingStats typingStats={props.profile.typingStats} />
+        </div>
+        <div class="hidden h-full w-2 rounded bg-bg lg:order-6 lg:block"></div>
+        <div class="lg:order-last">
+          <Show when={!props.profile.banned}>
+            <Socials socials={props.profile.details?.socialProfiles} />
+          </Show>
+        </div>
+      </div>
 
-      <Show when={!props.profile.banned}>
-        <BioAndKeyboard details={props.profile.details} />
-        <Socials socials={props.profile.details?.socialProfiles} />
-      </Show>
+      <div class="h-full rounded-r hover:bg-text hover:text-bg">
+        <div>X</div>
+      </div>
     </div>
   );
 }
@@ -150,20 +168,24 @@ function BioAndKeyboard(props: { details?: UserProfileDetails }): JSXElement {
 
 function TypingStats(props: { typingStats: TypingStatsType }): JSXElement {
   return (
-    <div>
-      <div class="text-xs text-sub">tests started</div>
-      <div class="text-2xl">{props.typingStats.startedTests}</div>
-
-      <div class="text-xs text-sub">tests completed</div>
-      <div class="text-2xl">{props.typingStats.completedTests}</div>
-
-      <div class="text-xs text-sub">time typing</div>
-      <div class="text-2xl">
-        {secondsToString(
-          Math.round(props.typingStats.timeTyping ?? 0),
-          true,
-          true,
-        )}
+    <div class="grid grid-cols-3 gap-4 lg:flex lg:flex-col">
+      <div class="flex flex-col">
+        <div class="text-xs text-sub">tests started</div>
+        <div class="text-2xl">{props.typingStats.startedTests}</div>
+      </div>
+      <div class="flex flex-col">
+        <div class="text-xs text-sub">tests completed</div>
+        <div class="text-2xl">{props.typingStats.completedTests}</div>
+      </div>
+      <div class="flex flex-col">
+        <div class="text-xs text-sub">time typing</div>
+        <div class="text-2xl">
+          {secondsToString(
+            Math.round(props.typingStats.timeTyping ?? 0),
+            true,
+            true,
+          )}
+        </div>
       </div>
     </div>
   );
@@ -173,9 +195,9 @@ function Socials(props: {
   socials?: UserProfileDetails["socialProfiles"];
 }): JSXElement {
   return (
-    <div>
-      <div class="text-xs text-sub">socials</div>
-      <div class="text-2xl text-text [&>a]:text-text [&>a]:hover:text-main">
+    <div class="">
+      <div class="text-xs text-sub lg:hidden">socials</div>
+      <div class="flex text-2xl text-text lg:flex-col [&>a]:text-text [&>a]:hover:text-main">
         <Show when={props.socials?.github}>
           <Button
             type="text"
