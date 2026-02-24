@@ -171,15 +171,15 @@ function TypingStats(props: { typingStats: TypingStatsType }): JSXElement {
     <div class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-4 sm:grid-cols-3 lg:flex lg:flex-col">
       <div class="flex flex-col">
         <div class="text-xs text-sub">tests started</div>
-        <div class="text-2xl">{props.typingStats.startedTests}</div>
+        <div class="text-2xl/5">{props.typingStats.startedTests}</div>
       </div>
       <div class="flex flex-col">
         <div class="text-xs text-sub">tests completed</div>
-        <div class="text-2xl">{props.typingStats.completedTests}</div>
+        <div class="text-2xl/5">{props.typingStats.completedTests}</div>
       </div>
       <div class="flex flex-col">
         <div class="text-xs text-sub">time typing</div>
-        <div class="text-2xl">
+        <div class="text-2xl/5">
           {secondsToString(
             Math.round(props.typingStats.timeTyping ?? 0),
             true,
