@@ -15,12 +15,11 @@ import { formatTopPercentage } from "../../../utils/misc";
 import * as Skeleton from "../../../utils/skeleton";
 import AsyncContent from "../../common/AsyncContent";
 import { Conditional } from "../../common/Conditional";
-
 import { ActivityCalendar } from "./ActivityCalendar";
 import { UserDetails } from "./UserDetails";
 
 const [currentName, setCurrentName] = createSignal<string | undefined>(
-  "user_50",
+  "jackmio",
 );
 
 //TODO
@@ -37,9 +36,7 @@ export function ProfilePage(): JSXElement {
     <AsyncContent query={profileQuery}>
       {(profile) => (
         <div class="flex flex-col gap-8">
-          <div class="rounded bg-sub-alt">
-            <UserDetails profile={profile} />
-          </div>
+          <UserDetails profile={profile} />
           <Show when={!profile.banned && !profile.lbOptOut}>
             <LeaderboardPosition
               top15={profile.allTimeLbs?.time?.["15"]?.["english"]}

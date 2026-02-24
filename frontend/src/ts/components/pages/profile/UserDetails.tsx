@@ -8,6 +8,7 @@ import { formatDate } from "date-fns/format";
 import { For, JSXElement, Show } from "solid-js";
 
 import { isFriend } from "../../../db";
+import { cn } from "../../../utils/cn";
 import { secondsToString } from "../../../utils/date-and-time";
 import { formatXp, getXpDetails, XPDetails } from "../../../utils/levels";
 import { AutoShrink } from "../../common/AutoShrink";
@@ -15,29 +16,54 @@ import { Button } from "../../common/Button";
 import { DiscordAvatar } from "../../common/DiscordAvatar";
 import { UserBadge, UserFlags } from "../../common/User";
 
+type Variant = "basic" | "hasSocials" | "hasBioOrKeyboard" | "full";
+
 export function UserDetails(props: { profile: UserProfile }): JSXElement {
+  const variant = (): Variant => {
+    // return "basic";
+    // return "hasBioOrKeyboard";
+    // return "hasSocials";
+    // return "full";
+    if (props.profile.banned) return "basic";
+
+    const hasSocials = props.profile.details?.socialProfiles !== undefined;
+    const hasBioOrKeyboard =
+      props.profile.details?.bio !== undefined ||
+      props.profile.details?.keyboard !== undefined;
+    if (!hasSocials && !hasBioOrKeyboard) return "basic";
+    if (hasSocials && !hasBioOrKeyboard) return "hasSocials";
+    if (!hasSocials && hasBioOrKeyboard) return "hasBioOrKeyboard";
+    return "full";
+  };
+
   return (
-    <div class="grid grid-cols-[1fr_minmax(0,2rem)]">
-      <div class="grid grid-cols-1 items-center gap-4 p-4 md:grid-cols-[1.25fr_auto_1.25fr] lg:grid-cols-[17.5rem_auto_1fr_auto_2fr_auto_auto]">
-        <div class="lg:order-first">
-          <AvatarAndName profile={props.profile} />
-        </div>
-        <div class="hidden h-full w-2 rounded bg-bg md:block lg:order-2"></div>
-        <div class="lg:order-5">
-          <Show when={!props.profile.banned}>
-            <BioAndKeyboard details={props.profile.details} />
-          </Show>
-        </div>
-        <div class="hidden h-full w-2 rounded bg-bg lg:order-3 lg:block"></div>
-        <div class="col-span-1 md:col-span-3 lg:order-2">
-          <TypingStats typingStats={props.profile.typingStats} />
-        </div>
-        <div class="hidden h-full w-2 rounded bg-bg lg:order-6 lg:block"></div>
-        <div class="lg:order-last">
-          <Show when={!props.profile.banned}>
-            <Socials socials={props.profile.details?.socialProfiles} />
-          </Show>
-        </div>
+    <div class="grid grid-cols-[1fr_minmax(0,2rem)] rounded-double bg-sub-alt">
+      <div
+        class={cn(
+          "grid items-center gap-4 p-4",
+          variant() === "basic" && "md:grid-cols-[17.5rem_auto_1fr]",
+          variant() === "hasBioOrKeyboard" &&
+            "sm:grid-cols-2 md:grid-cols-[17.5rem_auto_auto_auto_1fr] lg:grid-cols-[17.5rem_auto_1fr_auto_2fr]",
+          variant() === "hasSocials" &&
+            "sm:grid-cols-2 md:grid-cols-[17.5rem_auto_1fr_auto_auto]",
+          variant() === "full" &&
+            "sm:grid-cols-2 md:grid-cols-[1fr_auto_1fr_auto] lg:grid-cols-[17.5rem_auto_auto_auto_1fr_auto_auto] xl:lg:grid-cols-[17.5rem_auto_1fr_auto_2fr_auto_auto]",
+        )}
+      >
+        <AvatarAndName profile={props.profile} variant={variant()} />
+        <Show when={variant() === "full" || variant() === "hasBioOrKeyboard"}>
+          <BioAndKeyboard details={props.profile.details} variant={variant()} />
+        </Show>
+        <TypingStats
+          typingStats={props.profile.typingStats}
+          variant={variant()}
+        />
+        <Show when={variant() === "full" || variant() === "hasSocials"}>
+          <Socials
+            socials={props.profile.details?.socialProfiles}
+            variant={variant()}
+          />
+        </Show>
       </div>
 
       <div class="h-full rounded-r hover:bg-text hover:text-bg">
@@ -47,7 +73,10 @@ export function UserDetails(props: { profile: UserProfile }): JSXElement {
   );
 }
 
-function AvatarAndName(props: { profile: UserProfile }): JSXElement {
+function AvatarAndName(props: {
+  profile: UserProfile;
+  variant: Variant;
+}): JSXElement {
   const accountAgeHint = (): string => {
     const creationDate = new Date(props.profile.addedAt);
     const diffDays = differenceInDays(new Date(), creationDate);
@@ -59,7 +88,13 @@ function AvatarAndName(props: { profile: UserProfile }): JSXElement {
   }
 
   return (
-    <div class="grid w-full grid-cols-[5rem_1fr] items-center gap-4 self-center text-sub">
+    // <div class="grid w-full grid-cols-[5rem_1fr] items-center gap-4 self-center text-sub">
+    <div
+      class={cn(
+        "grid w-full grid-cols-[5rem_1fr] items-center gap-4 self-center text-sub",
+        props.variant === "hasSocials" && "sm:col-span-2 md:col-span-1",
+      )}
+    >
       <DiscordAvatar
         class="text-[5rem] text-sub"
         size={256}
@@ -86,19 +121,21 @@ function AvatarAndName(props: { profile: UserProfile }): JSXElement {
         >
           {(badgeId) => <UserBadge id={badgeId} iconOnly />}
         </For>
-        <span aria-label={accountAgeHint()} data-balloon-pos="up">
-          Joined {formatDate(props.profile.addedAt ?? 0, "dd MMM yyyy")}
-        </span>
-        <Show when={props.profile.streak ?? 0 > 1}>
-          <span
-            aria-label={
-              "Longest streak: " + formatStreak(props.profile.maxStreak)
-            }
-            data-balloon-pos="up"
-          >
-            Current streak {formatStreak(props.profile.streak)}
+        <div class="grid">
+          <span aria-label={accountAgeHint()} data-balloon-pos="up">
+            Joined {formatDate(props.profile.addedAt ?? 0, "dd MMM yyyy")}
           </span>
-        </Show>
+          <Show when={props.profile.streak ?? 0 > 1}>
+            <span
+              aria-label={
+                "Longest streak: " + formatStreak(props.profile.maxStreak)
+              }
+              data-balloon-pos="up"
+            >
+              Current streak {formatStreak(props.profile.streak)}
+            </span>
+          </Show>
+        </div>
       </div>
 
       <LevelAndBar xp={props.profile.xp} />
@@ -136,7 +173,7 @@ function LevelAndBar(props: { xp?: number }): JSXElement {
         </div>
       </div>
       <div
-        class="shrink-0"
+        class="shrink-0 text-xs"
         data-balloon-pos="up"
         aria-label={
           formatXp(xpDetails().levelMaxXp - xpDetails().levelCurrentXp) +
@@ -150,76 +187,150 @@ function LevelAndBar(props: { xp?: number }): JSXElement {
   );
 }
 
-function BioAndKeyboard(props: { details?: UserProfileDetails }): JSXElement {
+function BioAndKeyboard(props: {
+  details?: UserProfileDetails;
+  variant: Variant;
+}): JSXElement {
   return (
-    <div class="grid h-full grid-rows-2 text-xs">
-      <div>
-        <div class="text-sub">bio</div>
-        <div>{props.details?.bio}</div>
-      </div>
+    <>
+      <div
+        class={cn(
+          "hidden h-full w-2 rounded bg-bg",
+          props.variant === "hasBioOrKeyboard" && "md:order-3 md:block",
+          props.variant === "full" && "md:block lg:order-3",
+        )}
+      ></div>
+      <div
+        class={cn(
+          "grid h-full content-center gap-2 text-sm",
+          props.variant === "hasBioOrKeyboard" && "md:order-4",
+          props.variant === "full" && "md:col-span-2 lg:order-4 lg:col-span-1",
+        )}
+      >
+        <div>
+          <div class="text-sub">bio</div>
+          <div>{props.details?.bio}</div>
+        </div>
 
-      <div>
-        <div class="text-sub">keyboard</div>
-        <div>{props.details?.keyboard}</div>
+        <div>
+          <div class="text-sub">keyboard</div>
+          <div>{props.details?.keyboard}</div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
-function TypingStats(props: { typingStats: TypingStatsType }): JSXElement {
+function TypingStats(props: {
+  typingStats: TypingStatsType;
+  variant: Variant;
+}): JSXElement {
   return (
-    <div class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-4 sm:grid-cols-3 lg:flex lg:flex-col">
-      <div class="flex flex-col">
-        <div class="text-xs text-sub">tests started</div>
-        <div class="text-2xl/5">{props.typingStats.startedTests}</div>
-      </div>
-      <div class="flex flex-col">
-        <div class="text-xs text-sub">tests completed</div>
-        <div class="text-2xl/5">{props.typingStats.completedTests}</div>
-      </div>
-      <div class="flex flex-col">
-        <div class="text-xs text-sub">time typing</div>
-        <div class="text-2xl/5">
-          {secondsToString(
-            Math.round(props.typingStats.timeTyping ?? 0),
-            true,
-            true,
-          )}
+    <>
+      <div
+        class={cn(
+          "hidden h-full w-2 rounded bg-bg",
+          props.variant === "basic" && "md:block",
+          props.variant === "hasBioOrKeyboard" && "md:order-1 md:block",
+          props.variant === "hasSocials" && "md:block",
+          props.variant === "full" && "lg:order-1 lg:block",
+        )}
+      ></div>
+      {/* <div class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-4 sm:grid-cols-3 lg:flex lg:flex-col"> */}
+      <div
+        class={cn(
+          "grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-2",
+          props.variant === "basic" &&
+            "sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-3 lg:text-[1.25rem]",
+          props.variant === "hasBioOrKeyboard" &&
+            "sm:col-span-2 md:order-2 md:col-span-1 md:grid-cols-1",
+          props.variant === "hasSocials" &&
+            "sm:col-span-2 sm:grid-cols-3 md:col-span-1 md:grid-cols-1 lg:grid-cols-3 xl:text-[1.25rem]",
+          props.variant === "full" &&
+            "sm:col-span-2 sm:grid-cols-3 md:col-span-3 md:grid-cols-3 lg:order-2 lg:col-span-1 lg:grid-cols-1",
+        )}
+      >
+        <div class="flex flex-col">
+          <div class="text-em-sm text-sub">tests started</div>
+          <div class="text-em-2xl leading-6">
+            {props.typingStats.startedTests}
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <div class="text-em-sm text-sub">tests completed</div>
+          <div class="text-em-2xl leading-6">
+            {props.typingStats.completedTests}
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <div class="text-em-sm text-sub">time typing</div>
+          <div class="text-em-2xl leading-6">
+            {secondsToString(
+              Math.round(props.typingStats.timeTyping ?? 0),
+              true,
+              true,
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function Socials(props: {
   socials?: UserProfileDetails["socialProfiles"];
+  variant: Variant;
 }): JSXElement {
   return (
-    <div class="">
-      <div class="text-xs text-sub lg:hidden">socials</div>
-      <div class="flex text-2xl text-text lg:flex-col [&>a]:text-text [&>a]:hover:text-main">
-        <Show when={props.socials?.github}>
-          <Button
-            type="text"
-            fa={{ icon: "fa-github", variant: "brand", fixedWidth: true }}
-            href={`https://github.com/${props.socials?.github}`}
-          />
-        </Show>
-        <Show when={props.socials?.twitter}>
-          <Button
-            type="text"
-            fa={{ icon: "fa-twitter", variant: "brand", fixedWidth: true }}
-            href={`https://x.com/${props.socials?.twitter}`}
-          />
-        </Show>
-        <Show when={props.socials?.website}>
-          <Button
-            type="text"
-            fa={{ icon: "fa-globe", fixedWidth: true }}
-            href={props.socials?.website ?? ""}
-          />
-        </Show>
+    <>
+      <div
+        class={cn(
+          "hidden h-full w-2 rounded bg-bg",
+          props.variant === "hasSocials" && "md:block",
+          props.variant === "full" && "md:hidden lg:order-5 lg:block",
+        )}
+      ></div>
+      <div class={cn(props.variant === "full" && "lg:order-6")}>
+        <div
+          class={cn(
+            "text-sm text-sub md:hidden",
+            props.variant === "full" && "md:block lg:hidden",
+          )}
+        >
+          socials
+        </div>
+        <div
+          class={cn(
+            "flex gap-2 text-2xl text-text md:flex-col lg:flex-col [&>a]:text-text [&>a]:hover:text-main",
+            props.variant === "full" && "md:flex-row",
+          )}
+        >
+          <Show when={props.socials?.github}>
+            <Button
+              type="text"
+              fa={{ icon: "fa-github", variant: "brand", fixedWidth: true }}
+              href={`https://github.com/${props.socials?.github}`}
+              class="p-0"
+            />
+          </Show>
+          <Show when={props.socials?.twitter}>
+            <Button
+              type="text"
+              fa={{ icon: "fa-twitter", variant: "brand", fixedWidth: true }}
+              href={`https://x.com/${props.socials?.twitter}`}
+              class="p-0"
+            />
+          </Show>
+          <Show when={props.socials?.website}>
+            <Button
+              type="text"
+              fa={{ icon: "fa-globe", fixedWidth: true }}
+              href={props.socials?.website ?? ""}
+              class="p-0"
+            />
+          </Show>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
